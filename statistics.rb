@@ -1,32 +1,30 @@
 module QuizDemianchuk
   class Statistics
-    attr_accessor :correct_answers, :incorrect_answers
-
-    def initialize(writer)
+    def initialize
       @correct_answers = 0
       @incorrect_answers = 0
-      @writer = writer
     end
 
-    def correct_answer
-      @correct_answers += 1
+    def record_answer(is_correct)
+      if is_correct
+        @correct_answers += 1
+      else
+        @incorrect_answers += 1
+      end
     end
 
-    def incorrect_answer
-      @incorrect_answers += 1
-    end
+    def generate_report
+      total_questions = @correct_answers + @incorrect_answers
+      correct_percentage = total_questions > 0 ? (@correct_answers.to_f / total_questions) * 100 : 0.0
 
-    def print_report
-      total = @correct_answers + @incorrect_answers
-      correct_percent = (@correct_answers.to_f / total) * 100
-      report = <<-REPORT
-      Test Report:
-      Correct answers: #{@correct_answers}
-      Incorrect answers: #{@incorrect_answers}
-      Correct percentage: #{correct_percent.round(2)}%
+      report = <<~REPORT
+        Test Report:
+        Correct answers: #{@correct_answers}
+        Incorrect answers: #{@incorrect_answers}
+        Correct percentage: #{correct_percentage}%
       REPORT
-      @writer.write(report)
-      puts report
+
+      report
     end
   end
 end

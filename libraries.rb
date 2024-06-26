@@ -1,5 +1,6 @@
 require 'yaml'
 require 'json'
+require 'fileutils'
 require_relative 'config'
 require_relative 'question'
 require_relative 'question_data'

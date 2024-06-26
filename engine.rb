@@ -1,42 +1,44 @@
 module QuizDemianchuk
   class Engine
     def initialize
-      @question_collection = QuestionData.new
-      @input_reader = InputReader.new
-      @user_name = @input_reader.read(welcome_message: 'Enter your name:')
-      @current_time = Time.now.strftime('%Y%m%d_%H%M%S')
-      @writer = FileWriter.new('w', "#{@user_name}_#{@current_time}.txt")
-      @statistics = Statistics.new(@writer)
+      @statistics = Statistics.new
+      @file_writer = FileWriter.new('w', "answers/#{ARGV[0]}_#{Time.now.strftime('%Y%m%d_%H%M%S')}.txt")
+      @questions = load_questions('yml/questions.yml')
     end
 
     def run
-      @question_collection.collection.each do |question|
-        puts question
-        @writer.write(question.to_s)
-        question.display_answers.each { |answer| puts answer }
-        user_answer = get_answer_by_char(question)
-        check(user_answer, question.question_correct_answer)
+      puts "Enter your name:"
+      name = gets.chomp
+      @file_writer = FileWriter.new('w', "#{name}_#{Time.now.strftime('%Y%m%d_%H%M%S')}.txt")
+
+      @questions.each do |q|
+        puts q[:question]
+        q[:answers].each_with_index do |answer, index|
+          puts "#{index + 1}. #{answer}"
+        end
+        answer_index = gets.chomp.to_i - 1
+        is_correct = (q[:answers][answer_index] == q[:correct_answer])
+        @statistics.record_answer(is_correct)
+        @file_writer.write("Question: #{q[:question]}, Answer: #{q[:answers][answer_index]}, Correct: #{is_correct}")
       end
-      @statistics.print_report
+
+      report = @statistics.generate_report
+      puts report
+      @file_writer.write(report)
     end
 
-    def check(user_answer, correct_answer)
-      if user_answer == correct_answer
-        puts 'Correct!'
-        @statistics.correct_answer
-      else
-        puts 'Incorrect!'
-        @statistics.incorrect_answer
-      end
-    end
+    private
 
-    def get_answer_by_char(question)
-      @input_reader.read(
-        welcome_message: 'Your answer:',
-        validator: ->(input) { !input.empty? && question.question_answers.key?(input.upcase) },
-        error_message: 'Invalid answer. Please try again.',
-        process: ->(input) { input.strip.upcase }
-      )
+    def load_questions(file_path)
+      questions = YAML.load_file(file_path)
+      questions.map do |q|
+        correct_answer = q['answers'].first
+        {
+          question: q['question'],
+          answers: q['answers'],
+          correct_answer: correct_answer
+        }
+      end
     end
   end
 end
