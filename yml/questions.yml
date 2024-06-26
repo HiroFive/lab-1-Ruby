@@ -1,0 +1,12 @@
+- question: What is the capital of France?
+  answers:
+    - Paris
+    - London
+    - Berlin
+    - Madrid
+- question: Which is the largest planet in our solar system?
+  answers:
+    - Jupiter
+    - Earth
+    - Mars
+    - Saturn

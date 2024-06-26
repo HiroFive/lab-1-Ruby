@@ -1,6 +1,6 @@
-QuizYourSurname::Quiz.instance.config do |config|
-    config.yaml_dir = "quiz/yml"
-    config.answers_dir = "quiz/answers"
-    config.in_ext = "yml"
-  end
-  
+require_relative 'quiz'
+
+QuizDemianchuk::Quiz.config do |config|
+  config.yaml_dir = 'quiz/yml'
+  config.answers_dir = 'quiz/answers'
+end

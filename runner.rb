@@ -1,3 +1,4 @@
 require_relative 'libraries'
 
-QuizYourSurname::Engine.new.run
+engine = QuizDemianchuk::Engine.new
+engine.run
